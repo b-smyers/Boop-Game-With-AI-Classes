@@ -130,14 +130,6 @@ class Boop {
         bool is_legal(const string& move) const;
 
         /**
-         * @brief Creates a copy of the board
-         * @param board A PieceType pointer to copy the board to
-         * 
-         * @warning Dynamically allocates pointers, You are responsible for memory management
-        */
-        void clone_board(Boop::PieceType**& board_ptr) const;
-
-        /**
          * @brief The number of kitten pieces a player has
          * @param player A who enum representing the player to check
         */

@@ -287,17 +287,6 @@ bool Boop::is_legal(const string& move) const {
     return true;
 }
 
-void Boop::clone_board(Boop::PieceType**& board_ptr) const {
-    Boop::PieceType** new_board = new PieceType*[SIZE];
-    for(int y = 0; y < SIZE; ++y) {
-        new_board[y] = new Boop::PieceType[SIZE];
-        for(int x = 0; x < SIZE; ++x) {
-            new_board[x][y] = board[x][y];
-        }
-    }
-    board_ptr = new_board;
-}
-
 int Boop::kittens(Boop::who player) const { 
     if(player == P1) {
         return P1_kit_pieces;
