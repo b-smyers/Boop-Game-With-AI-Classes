@@ -38,7 +38,23 @@ class Boop {
         Boop(const Boop& other);
         Boop& operator = (const Boop& other);
         
-        who play() {
+
+        struct Game_Results {
+            // Game results
+            Boop::who winner = Boop::NEUTRAL;
+            double think_time = 100;
+            int num_moves = 0;
+            double duration = 0;
+
+            // AI results
+            double P1_avg_think_time = 0;
+            double P2_avg_think_time = 0;
+        };
+
+
+        Game_Results play() {
+            Game_Results results;
+            results.think_time = think_time_ms;
             string AI_Move;
             Timer timer(think_time_ms);
             int turn_count = 0;
@@ -52,14 +68,26 @@ class Boop {
                 AI_Move = (next_mover() == P1 ? P1_AI->think(moves, timer) : P2_AI->think(moves, timer));
                 timer.stop();
 
-                duration += timer.elapsedMilliseconds();
+                results.duration += timer.elapsedMilliseconds();
+
+                if(next_mover() == P1) {
+                    results.P1_avg_think_time = (results.P1_avg_think_time + timer.elapsedMilliseconds()) / 2;
+                } else {
+                    results.P2_avg_think_time = (results.P2_avg_think_time + timer.elapsedMilliseconds()) / 2;
+                }
 
                 make_move(AI_Move);
 
-                if(++turn_count >= turn_limit*2) { return Boop::NEUTRAL; }
+                if(++turn_count >= turn_limit*2) { 
+                    results.num_moves = turn_limit;
+                    return results;
+                }
             }
-            //cout << "# Moves " << move_number << "  Duration: " << duration << " ms\n";
-            return winning();
+
+            results.num_moves = turn_count / 2;
+            results.winner = winning();
+
+            return results;
         }
 
         void make_move(const string& move);

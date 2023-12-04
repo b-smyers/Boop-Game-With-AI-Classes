@@ -3,6 +3,11 @@
 
 #include "../AI.h"
 
+/** 
+ * Goal of the AI: 
+ *      Play the moves that create the most change in board state.
+ *      Play the moves that boop the most pieces.
+ */
 class Boopy_AI : public AI {
     public:
         Boopy_AI() { }

@@ -3,6 +3,11 @@
 
 #include "../AI.h"
 
+/**
+ * Goal of the AI:
+ *      
+*/
+
 class Template_AI : public AI {
     public:
         Template_AI() { }

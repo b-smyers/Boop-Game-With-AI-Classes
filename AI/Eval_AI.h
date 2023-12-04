@@ -3,6 +3,12 @@
 
 #include "../AI.h"
 
+/**
+ * Goal of the AI:
+ *      Look SEARCH_LEVELS deep into the future and playing-
+ *      the best move according the evaluate function
+*/
+
 class Eval_AI : public AI {
     public:
         Eval_AI() { }

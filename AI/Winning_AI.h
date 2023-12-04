@@ -5,6 +5,12 @@
 
 #include <cstdlib>
 
+/**
+ * Goal of the AI:
+ *      Use the internal 'winning()' function to create a list of winning moves-
+ *      then pick from the winning moves at random, otherwise pick from the losing moves.
+*/
+
 class Winning_AI : public AI {
     public:
         Winning_AI() { }

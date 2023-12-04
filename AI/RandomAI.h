@@ -5,6 +5,11 @@
 
 #include <cstdlib>
 
+/**
+ * Goal of the AI:
+ *      Play random moves
+*/
+
 class Random_AI : public AI {
     public:
         Random_AI() { };
