@@ -65,6 +65,7 @@ int Minimax_Alpha_Beta_AI::minimax_alpha_beta(const Boop* position, int depth, i
         }
     }
     
+    int eval;
     Boop* future;
     std::queue<std::string> moves;
     position->compute_moves(moves);
@@ -77,16 +78,16 @@ int Minimax_Alpha_Beta_AI::minimax_alpha_beta(const Boop* position, int depth, i
             future = position->clone();
             future->make_move(moves.front());
             // Evaluate the move
-            int eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
+            eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
             delete future;
             
             // If the move was better than our max, it becomes are max evaluation-
             // and out lower bound or 'alpha'
             max_eval = std::max(max_eval, eval);
-            alpha = std::max(alpha, eval);
+            alpha = std::max(alpha, max_eval);
 
             // If the move was worse than our lower bound/best move, cut the branch
-            if (beta <= alpha) {
+            if (beta <= max_eval) {
                 break;  // Beta cutoff
             }
             moves.pop();
@@ -100,14 +101,13 @@ int Minimax_Alpha_Beta_AI::minimax_alpha_beta(const Boop* position, int depth, i
             future = position->clone();
             future->make_move(moves.front());
 
-            int eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
+            eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
             delete future;
 
             min_eval = std::min(min_eval, eval);
-            beta = std::min(beta, eval);
+            beta = std::min(beta, min_eval);
 
-
-            if (beta <= alpha) {
+            if (min_eval <= alpha) {
                 break;  // Alpha cutoff
             }
             moves.pop();

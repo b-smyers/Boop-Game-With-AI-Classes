@@ -19,12 +19,12 @@ int main() {
     double think_time = 100; // ms
 
     int num_games = 100;
+    double average_duration = 0;
 
     for(int i = 1; i <= num_games; ++i) {
         Boop mygame(AI1, AI2, think_time);
 
         results = mygame.play();
-
 
         if(results.winner == Boop::P1) { 
             P1_Wins++; 
@@ -34,8 +34,10 @@ int main() {
             Ties++; 
         }
 
+        average_duration = (average_duration + results.duration)/2;
+
         cout << std::fixed << std::setprecision(1) << (double) i*100/num_games << "% |";
-        cout << std::fixed << std::setprecision(2) << " ETA: "<< (double) ((results.duration / i) * (num_games - i))/1000 << " sec |";
+        cout << std::fixed << std::setprecision(2) << " ETA: "<< (double) (average_duration * (num_games - i))/1000 << " sec |";
         cout << " Winner: " << (results.winner == Boop::P1 ? "P1 " : (results.winner == Boop::P2 ? "P2 " : "Tie"));
         cout << std::fixed << std::setprecision(2) << " | Avg Think (ms) [P1: " << results.P1_avg_think_time << "] [P2: " << results.P2_avg_think_time << "]\n";
     }
