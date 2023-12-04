@@ -1,20 +1,32 @@
 #include "boop.h"
-#include "RandomAI.h"
-#include "Winning_AI.h"
-#include "Eval_AI.h"
+#include "Timer.h"
+#include "AI/RandomAI.h"
+#include "AI/Winning_AI.h"
+#include "AI/Eval_AI.h"
 
 int main() {
     int P1_Wins = 0;
     int P2_Wins = 0;
 
-    AI* AI1 = new Random_AI;
-    AI* AI2 = new Eval_AI;
+    Timer timer(0);
+    double elapsed_time = 0;
+
+    AI* AI1 = new Winning_AI;
+    AI* AI2 = new Winning_AI;
     double think_time = 100; // ms
 
-    for(int i = 0; i < 100; ++i) {
+    int num_games = 100;
+
+    for(int i = 1; i <= num_games; ++i) {
         Boop mygame(AI1, AI2, think_time);
+        timer.start();
         Boop::who winner = mygame.play();
+        timer.stop();
         if(winner == Boop::P1) { P1_Wins++; } else { P2_Wins++; }
+        elapsed_time += timer.elapsedMilliseconds();
+
+        // Time remaining
+        cout << "ETA: " << (double) ((elapsed_time / i) * (num_games - i))/1000 << " sec    Iter: " << i << "/" << num_games << "\n";
     }
 
     cout << "Player 1 Won: " << P1_Wins << " games\n";

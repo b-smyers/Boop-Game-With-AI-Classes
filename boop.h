@@ -53,10 +53,8 @@ class Boop {
                 duration += timer.elapsedMilliseconds();
 
                 make_move(AI_Move);
-                // display_status();
-                // cout << (next_mover() == P1 ? "Player 1" : "Player 2") << " made the move: " << AI_Move << '\n';
             }
-            cout << "# Moves " << move_number << "  Duration: " << duration << " ms\n";
+            //cout << "# Moves " << move_number << "  Duration: " << duration << " ms\n";
             return winning();
         }
 

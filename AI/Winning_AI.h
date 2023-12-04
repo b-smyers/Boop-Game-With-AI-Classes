@@ -1,8 +1,7 @@
 #ifndef WINNING_AI_H
 #define WINNING_AI_H
 
-#include "AI.h"
-#include "boop.h"
+#include "../AI.h"
 
 #include <cstdlib>
 

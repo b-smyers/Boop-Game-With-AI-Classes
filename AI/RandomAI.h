@@ -1,8 +1,7 @@
 #ifndef RANDOMAI_H
 #define RANDOMAI_H
 
-#include "AI.h"
-#include "boop.h"
+#include "../AI.h"
 
 #include <cstdlib>
 

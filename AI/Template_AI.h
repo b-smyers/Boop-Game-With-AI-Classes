@@ -1,7 +1,7 @@
 #ifndef TEMPLATE_AI_H
 #define TEMPLATE_AI_H
 
-#include "AI.h"
+#include "../AI.h"
 
 class Template_AI : public AI {
     public:

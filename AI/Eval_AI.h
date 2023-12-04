@@ -1,7 +1,7 @@
 #ifndef EVAL_AI_H
 #define EVAL_AI_H
 
-#include "AI.h"
+#include "../AI.h"
 
 class Eval_AI : public AI {
     public:
