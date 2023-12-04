@@ -7,7 +7,6 @@
 */
 
 #include "boop.h"
-#include "colors.h"
 #include <iostream>
 #include <algorithm>
 #include <cmath>
@@ -433,65 +432,6 @@ void Boop::restart() {
     P1_AI = nullptr;
     P2_AI = nullptr;
     think_time_ms = 100;
-}
-
-void Boop::display_status() const {
-    // For each row
-    for(int y = 0; y < SIZE; ++y) {
-        cout << row_divider << endl;
-
-        // For each 3 thick slice
-        for(int slice_num = 0; slice_num < 3; ++slice_num) {
-
-            // For each column
-            for(int x = 0; x < SIZE; ++x) {
-                cout << '|';
-                switch(board[5 - y][x]) { // The (5 - y) thingy is so i can interact with the board[x][y] instead of [y][x] in the rest of my code
-                    case NONE:
-                        cout << none[slice_num];
-                        break;
-                    case P1_KIT:
-                        cout << P1_Color << bunny[slice_num] << RESET;
-                        break;
-                    case P1_CAT:
-                        cout << P1_Color << rabbit[slice_num] << RESET;
-                        break;
-                    case P2_KIT:
-                        cout << P2_Color << bunny[slice_num] << RESET;
-                        break;
-                    case P2_CAT:
-                        cout << P2_Color << rabbit[slice_num] << RESET;
-                        break;
-                }
-            }
-            cout << '|';
-            if(slice_num == 1) { // Numbering on side
-                cout << " " << 6 - y;
-            }
-            cout << endl;
-        }
-    }
-    cout << row_divider << endl;
-    cout << letters_bar << endl;
-    
-    // Evaluation Bar
-    string winning = "  No particular player";
-    string winning_color = RESET;
-    int eval = evaluate();
-    if(eval != 0) { 
-        winning = eval < 0 ? "       Player 1" : "       Player 2"; 
-        winning_color = eval < 0 ? P1_Color : P2_Color;
-    }
-    cout << winning_color << winning << " is currently winning (" << eval << ")" << RESET << endl;
-
-    string P1_B = next_mover() == P1 ? P1_Color : RESET;
-    string P2_B = next_mover() == P2 ? P2_Color : RESET;
-
-    cout << P1_B << "+--------------+"                    << RESET << " Type \"b\" or \"r\" " << P2_B << "+--------------+" << RESET << endl;
-    cout << P1_B << "|   Player 1   |"                    << RESET << " and column-row  "     << P2_B << "|   Player 2   |" << RESET << endl;
-    cout << P1_B << "|  Bunnies: " << P1_kit_pieces << "  |" << RESET << "  (e.g., \"bc4\")  "   << P2_B << "|  Bunnies: " << P2_kit_pieces << "  |" << RESET << endl;
-    cout << P1_B << "|  Rabbits: " << P1_cat_pieces << "  |" << RESET << " to move a bunny "     << P2_B << "|  Rabbits: " << P2_cat_pieces << "  |" << RESET << endl;
-    cout << P1_B << "+--------------+"                    << RESET << "   or rabbit.    "     << P2_B << "+--------------+" << RESET << endl;
 }
 
 int Boop::evaluate() const {

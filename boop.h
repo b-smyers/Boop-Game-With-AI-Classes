@@ -10,7 +10,6 @@
 #define BOOP_H
 
 #include "AI.h"
-#include "colors.h"
 #include <queue>
 #include <string>
 using namespace std;
@@ -243,15 +242,8 @@ class Boop {
         AI* P2_AI = nullptr;
         double think_time_ms;
 
-        // Optional Display items
-        const string P1_Color = MAGENTA;
-        const string P1_B_Color = B_MAGENTA;
-        const string P2_Color = GREEN;
-        const string P2_B_Color = B_GREEN;
-
         // Private functions
         void restart();
-        void display_status() const;
         int evaluate() const;
 
         // Helper Functions
