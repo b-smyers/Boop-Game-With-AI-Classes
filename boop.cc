@@ -166,6 +166,14 @@ Boop* Boop::clone() const {
     return new Boop(*this);
 }
 
+void Boop::clone_board(Boop::PieceType board[][SIZE]) const {
+    for(int y = 0; y < SIZE; ++y) {
+        for(int x = 0; x < SIZE; ++x) {
+            board[x][y] = this->board[x][y];
+        }
+    }
+}
+
 void Boop::compute_moves(queue<string>& moves) const {
     if(is_game_over()) { return; }
 

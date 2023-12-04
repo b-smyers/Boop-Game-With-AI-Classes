@@ -27,6 +27,7 @@ const string rabbit[3] = { "(\\(\\   ", "(-.-)  ", "_(\")(\")" };
 
 class Boop {
     public:
+        static const int SIZE = 6;
         enum PieceType { NONE, P1_KIT, P1_CAT, P2_KIT, P2_CAT };
         enum MoveState { MAKE_MOVE, REMOVE_THREE, REMOVE_ONE };
         enum who { P1, NEUTRAL, P2 };
@@ -105,6 +106,13 @@ class Boop {
          * @warning Dynamically allocates pointers, You are responsible for memory management
         */
         Boop* clone() const;
+
+        /**
+         * @brief Clones the current boop game board
+         * 
+         * @param board A 6x6 board to copy the game board to
+        */
+        void clone_board(Boop::PieceType board[][SIZE]) const;
 
         /**
          * @brief Generates all possible legal moves for the given board state
@@ -198,7 +206,6 @@ class Boop {
     private:
         friend class AI;
 
-        static const int SIZE = 6;
         const int CENTER_INCENTIVE[SIZE][SIZE] ={{ 1, 2, 4, 4, 2, 1},
                                                 { 2, 5, 7, 7, 5, 2},
                                                 { 4, 7,10,10, 7, 4},

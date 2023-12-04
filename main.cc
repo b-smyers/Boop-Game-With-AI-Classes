@@ -1,8 +1,10 @@
+#include "iomanip"
 #include "boop.h"
 #include "Timer.h"
 #include "AI/RandomAI.h"
 #include "AI/Winning_AI.h"
 #include "AI/Eval_AI.h"
+#include "AI/Boopy_AI.h"
 
 int main() {
     int P1_Wins = 0;
@@ -11,11 +13,11 @@ int main() {
     Timer timer(0);
     double elapsed_time = 0;
 
-    AI* AI1 = new Winning_AI;
-    AI* AI2 = new Winning_AI;
+    AI* AI1 = new Boopy_AI;
+    AI* AI2 = new Eval_AI;
     double think_time = 100; // ms
 
-    int num_games = 100;
+    int num_games = 1000;
 
     for(int i = 1; i <= num_games; ++i) {
         Boop mygame(AI1, AI2, think_time);
@@ -26,7 +28,7 @@ int main() {
         elapsed_time += timer.elapsedMilliseconds();
 
         // Time remaining
-        cout << "ETA: " << (double) ((elapsed_time / i) * (num_games - i))/1000 << " sec    Iter: " << i << "/" << num_games << "\n";
+        cout << "ETA: " << std::fixed << std::setprecision(3) << (double) ((elapsed_time / i) * (num_games - i))/1000 << " sec   Progress: " << (double) i*100/num_games << "%   Winner: Player " << (winner == Boop::P1 ? "1" : "2") << "\n";
     }
 
     cout << "Player 1 Won: " << P1_Wins << " games\n";
