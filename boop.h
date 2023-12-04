@@ -41,6 +41,7 @@ class Boop {
         who play() {
             string AI_Move;
             Timer timer(think_time_ms);
+            int turn_count = 0;
             double duration = 0;
 
             while(!is_game_over()) {
@@ -54,6 +55,8 @@ class Boop {
                 duration += timer.elapsedMilliseconds();
 
                 make_move(AI_Move);
+
+                if(++turn_count >= turn_limit*2) { return Boop::NEUTRAL; }
             }
             //cout << "# Moves " << move_number << "  Duration: " << duration << " ms\n";
             return winning();
@@ -238,6 +241,7 @@ class Boop {
         AI* P1_AI = nullptr;
         AI* P2_AI = nullptr;
         double think_time_ms;
+        const int turn_limit = 1000;
 
         // Private functions
         void restart();
