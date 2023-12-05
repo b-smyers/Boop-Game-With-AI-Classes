@@ -1,0 +1,186 @@
+#ifndef BOOPY_ALPHA_BETA_AI_H
+#define BOOPY_ALPHA_BETA_AI_H
+
+#include "../AI.h"
+
+#include <limits>
+#include <iostream>
+
+/**
+ * Goal of the AI:
+ *      Boop the most pieces with lookahead
+*/
+
+class Boopy_Alpha_Beta_AI : public AI {
+    public:
+        Boopy_Alpha_Beta_AI() { }
+        std::string think(std::queue<std::string> moves, Timer& timer) override;
+    private:
+        const int SEARCH_DEPTH = 4; // 4 seems to be the most optimal depth, after that it becomes more unstable
+        Timer* timer;
+        Boop::who me = Boop::NEUTRAL;
+        Boop::PieceType board[Boop::SIZE][Boop::SIZE];
+        int minimax_alpha_beta(const Boop* position, int depth, int alpha, int beta) const;
+        int evaluate(const Boop* position) const;
+        int board_difference(const Boop* future) const;
+};
+
+std::string Boopy_Alpha_Beta_AI::think(std::queue<std::string> moves, Timer& timer) {
+    std::string best_move;
+    // Check timer.times_up() between loops as to not go over the time limit
+    
+    this->timer = &timer;
+
+    int alpha = std::numeric_limits<int>::min();
+    int beta = std::numeric_limits<int>::max();
+    int best_score = std::numeric_limits<int>::min();
+
+    game->clone_board(board);
+    Boop* future;
+    me = game->next_mover();
+
+    while(!moves.empty()) {
+        future = game->clone();
+        future -> make_move(moves.front());
+        int score = minimax_alpha_beta(future, SEARCH_DEPTH - 1, alpha, beta);
+        delete future;
+
+        if(score > best_score) {
+            best_score = score;
+            best_move = moves.front();
+        }
+        alpha = std::max(alpha, score);
+        moves.pop();
+        if(timer.times_up()) { return best_move; }
+    }
+
+    return best_move;
+}
+
+int Boopy_Alpha_Beta_AI::minimax_alpha_beta(const Boop* position, int depth, int alpha, int beta) const {
+    if (depth == 0 || position->is_game_over()) {
+        if (position->next_mover() == me) {
+            return board_difference(position);
+        } else {
+            return evaluate(position) * (me == Boop::P1 ? -1 : 1);
+        }
+    }
+    
+    int eval;
+    Boop* future;
+    std::queue<std::string> moves;
+    position->compute_moves(moves);
+
+    // If its my turn (Maximize boops)
+    if (position->next_mover() == me) {
+        int max_eval = std::numeric_limits<int>::min();
+        // For each move
+        while(!moves.empty()) {
+            future = position->clone();
+            future->make_move(moves.front());
+            // Evaluate the move
+            eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
+            delete future;
+            
+            // If the move was better than our max, it becomes are max evaluation-
+            // and out lower bound or 'alpha'
+            max_eval = std::max(max_eval, eval);
+            alpha = std::max(alpha, max_eval);
+
+            // If the move was worse than our lower bound/best move, cut the branch
+            if (beta <= max_eval) {
+                break;  // Beta cutoff
+            }
+            moves.pop();
+            if(timer->times_up()) { return max_eval; }
+        }
+        return max_eval;
+    } else { // Minimize score
+        int min_eval = std::numeric_limits<int>::max();
+
+        while(!moves.empty()) {
+            future = position->clone();
+            future->make_move(moves.front());
+
+            eval = minimax_alpha_beta(future, depth - 1, alpha, beta);
+            delete future;
+
+            min_eval = std::min(min_eval, eval);
+            beta = std::min(beta, min_eval);
+
+            if (min_eval <= alpha) {
+                break;  // Alpha cutoff
+            }
+            moves.pop();
+            if(timer->times_up()) { return min_eval; }
+        }
+        return min_eval;
+    }
+}
+
+int Boopy_Alpha_Beta_AI::evaluate(const Boop* position) const {
+    // Return neg if human is winning
+    // Return pos if computer is winning
+    int eval = 0;
+
+    Boop::who turn = position->next_mover();
+
+    /// MATERIAL ADVANTAGE EVALUATION
+    
+    // 16-240
+    eval -= ((position->kittens(turn) * 2) + (position->cats(turn) * 40));
+    eval += ((position->kittens(position->opposite(turn)) * 2) + (position->cats(position->opposite(turn)) * 40));
+
+    /// POSITIONAL ADVANTAGE EVALUATION
+
+    // Check for Tri-Patterns
+    // Rabbits
+    eval -= (position->count_tri_pattern(Boop::P1_CAT) * 10 * (turn == Boop::P1 ? 8 : 1));
+    eval += (position->count_tri_pattern(Boop::P2_CAT) * 10 * (turn == Boop::P2 ? 8 : 1));
+    // Bunnies
+    eval -= (position->count_tri_pattern(Boop::P1_KIT) * 15 * (turn == Boop::P1 ? 8 : 1));
+    eval += (position->count_tri_pattern(Boop::P2_KIT) * 15 * (turn == Boop::P2 ? 8 : 1));
+    // Miss match of bunnies and rabbits
+    eval -= (position->count_tri_pattern() * 5 * (turn == Boop::P1 ? 4 : 1));
+    eval += (position->count_tri_pattern() * 5 * (turn == Boop::P2 ? 4 : 1));
+
+    // Check for regular patterns
+    // This is to take into account that all threes create two twos.
+    int P1_Bunny_Threes = position->count_type_in_row(3, Boop::P1_KIT);
+    int P2_Bunny_Threes = position->count_type_in_row(3, Boop::P2_KIT);
+    // Check for TWO bunny in row (40/5-200/25)
+    eval -= ((position->count_type_in_row(2, Boop::P1_KIT) - P1_Bunny_Threes * 2) * 5 * (turn == Boop::P1 ? 8 : 1));
+    eval += ((position->count_type_in_row(2, Boop::P2_KIT) - P1_Bunny_Threes * 2) * 5 * (turn == Boop::P2 ? 8 : 1));
+    // Check for THREE bunny in row (80/10-400/50)
+    eval -= (P1_Bunny_Threes * 10 * (turn == Boop::P1 ? 16 : 1));
+    eval += (P2_Bunny_Threes * 10 * (turn == Boop::P2 ? 16 : 1));
+    // Check for TWO rabbit in row (120/15-960/120)
+    eval -= (position->count_type_in_row(2, Boop::P1_CAT) * 15 * (turn == Boop::P1 && position->cats(position->next_mover()) > 0 ? (position->cats(position->last_mover()) > 0 ? 8 : 16) * (position->cats(position->next_mover()) != 0 ? 0.25 : 1) : 1));
+    eval += (position->count_type_in_row(2, Boop::P2_CAT) * 15 * (turn == Boop::P2 && position->cats(position->last_mover()) > 0 ? (position->cats(position->next_mover()) > 0 ? 8 : 16) * (position->cats(position->last_mover()) != 0 ? 0.25 : 1) : 1));
+
+    // Winning Conditions - Give huge rewards
+    // Check for THREE rabbit in row
+    eval = (position->count_type_in_row(3, Boop::P1_CAT) > 0 ? -9999 : eval);
+    eval = (position->count_type_in_row(3, Boop::P2_CAT) > 0 ?  9999 : eval);
+    // Check for all eight rabbits on the board at the same time
+    eval = (position->has_eight_cat_down(Boop::P1)    ? -9999 : eval);
+    eval = (position->has_eight_cat_down(Boop::P2) ?  9999 : eval);
+
+    return eval;
+}
+
+int Boopy_Alpha_Beta_AI::board_difference(const Boop* future) const {
+    int c = 0;
+    Boop::PieceType future_board[6][6];
+    future->clone_board(future_board);
+
+    for(int y = 0; y < Boop::SIZE; ++y) {
+        for(int x = 0; x < Boop::SIZE; ++x) {
+            if(board[x][y] != future_board[x][y]) { ++c; }
+        }
+    }
+
+    return c;
+}
+
+#endif
