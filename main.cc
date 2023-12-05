@@ -5,7 +5,9 @@
 #include "AI/Winning_AI.h"
 #include "AI/Eval_AI.h"
 #include "AI/Boopy_AI.h"
+#include "AI/Boopy_Alpha_Beta.h"     // BEST AI YET
 #include "AI/Minimax_Alpha_Beta_AI.h"
+#include "AI/Human_AI.h"  // USE HUMAN AI TO PLAY AGAINST ANOTHER AI
 
 int main() {
     int P1_Wins = 0;
@@ -14,8 +16,8 @@ int main() {
 
     Boop::Game_Results results;
 
-    AI* AI1 = new Random_AI;
-    AI* AI2 = new Minimax_Alpha_Beta_AI;
+    AI* AI1 = new Human_AI;
+    AI* AI2 = new Boopy_Alpha_Beta_AI;
     double think_time = 100; // ms
 
     int num_games = 100;
@@ -38,7 +40,8 @@ int main() {
 
         cout << std::fixed << std::setprecision(1) << (double) i*100/num_games << "% |";
         cout << std::fixed << std::setprecision(2) << " ETA: "<< (double) (average_duration * (num_games - i))/1000 << " sec |";
-        cout << " Winner: " << (results.winner == Boop::P1 ? "P1 " : (results.winner == Boop::P2 ? "P2 " : "Tie"));
+        cout << " W: " << (results.winner == Boop::P1 ? "P1 " : (results.winner == Boop::P2 ? "P2 " : "Tie"));
+        cout << " | T: " << results.num_moves;
         cout << std::fixed << std::setprecision(2) << " | Avg Think (ms) [P1: " << results.P1_avg_think_time << "] [P2: " << results.P2_avg_think_time << "]\n";
     }
 
