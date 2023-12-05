@@ -9,6 +9,7 @@
 #ifndef BOOP_H
 #define BOOP_H
 
+#include "colors.h"
 #include "AI.h"
 #include <queue>
 #include <string>
@@ -68,23 +69,28 @@ class Boop {
                 AI_Move = (next_mover() == P1 ? P1_AI->think(moves, timer) : P2_AI->think(moves, timer));
                 timer.stop();
 
-                results.duration += timer.elapsedMilliseconds();
+                duration += timer.elapsedMilliseconds();
 
                 if(next_mover() == P1) {
-                    results.P1_avg_think_time = (results.P1_avg_think_time + timer.elapsedMilliseconds()) / 2;
+                    results.P1_avg_think_time += timer.elapsedMilliseconds();
                 } else {
-                    results.P2_avg_think_time = (results.P2_avg_think_time + timer.elapsedMilliseconds()) / 2;
+                    results.P2_avg_think_time += timer.elapsedMilliseconds();
                 }
 
                 make_move(AI_Move);
 
                 if(++turn_count >= turn_limit*2) { 
                     results.num_moves = turn_limit;
+                    results.duration = duration;
+                    results.P1_avg_think_time /= results.num_moves;
+                    results.P2_avg_think_time /= results.num_moves;
                     return results;
                 }
             }
-
             results.num_moves = turn_count / 2;
+            results.duration = duration;
+            results.P1_avg_think_time /= results.num_moves;
+            results.P2_avg_think_time /= results.num_moves;
             results.winner = winning();
 
             return results;
@@ -234,6 +240,8 @@ class Boop {
         */
         int count_tri_pattern(PieceType type = NONE) const;
 
+        void display_status() const;
+
     private:
         friend class AI;
 
@@ -269,7 +277,11 @@ class Boop {
         AI* P1_AI = nullptr;
         AI* P2_AI = nullptr;
         double think_time_ms;
-        const int turn_limit = 1000;
+        const int turn_limit = 300;
+
+        // Human display Items
+        string P1_Color = MAGENTA;
+        string P2_Color = GREEN;
 
         // Private functions
         void restart();

@@ -122,15 +122,15 @@ int Minimax_Alpha_Beta_AI::evaluate(const Boop* position) const {
     // Return pos if computer is winning
     int eval = 0;
 
+    Boop::who turn = position->next_mover();
+
     /// MATERIAL ADVANTAGE EVALUATION
     
     // 16-240
-    eval -= ((position->kittens(position->next_mover()) * 2) + (position->cats(position->next_mover()) * 40));
-    eval += ((position->kittens(position->last_mover()) * 2) + (position->cats(position->last_mover()) * 40));
+    eval -= ((position->kittens(turn) * 2) + (position->cats(turn) * 40));
+    eval += ((position->kittens(position->opposite(turn)) * 2) + (position->cats(position->opposite(turn)) * 40));
 
     /// POSITIONAL ADVANTAGE EVALUATION
-
-    Boop::who turn = position->next_mover();
 
     // Check for Tri-Patterns
     // Rabbits
@@ -148,14 +148,14 @@ int Minimax_Alpha_Beta_AI::evaluate(const Boop* position) const {
     int P1_Bunny_Threes = position->count_type_in_row(3, Boop::P1_KIT);
     int P2_Bunny_Threes = position->count_type_in_row(3, Boop::P2_KIT);
     // Check for TWO bunny in row (40/5-200/25)
-    eval -= (position->count_type_in_row(2, Boop::P1_KIT) * 5 * (turn == Boop::P1 ? 8 : 1));
-    eval += (position->count_type_in_row(2, Boop::P2_KIT) * 5 * (turn == Boop::P2 ? 8 : 1));
+    eval -= ((position->count_type_in_row(2, Boop::P1_KIT) - P1_Bunny_Threes * 2) * 5 * (turn == Boop::P1 ? 8 : 1));
+    eval += ((position->count_type_in_row(2, Boop::P2_KIT) - P1_Bunny_Threes * 2) * 5 * (turn == Boop::P2 ? 8 : 1));
     // Check for THREE bunny in row (80/10-400/50)
-    eval -= (P1_Bunny_Threes * 10 * (turn == Boop::P1 ? 8 : 1));
-    eval += (P2_Bunny_Threes * 10 * (turn == Boop::P2 ? 8 : 1));
+    eval -= (P1_Bunny_Threes * 10 * (turn == Boop::P1 ? 16 : 1));
+    eval += (P2_Bunny_Threes * 10 * (turn == Boop::P2 ? 16 : 1));
     // Check for TWO rabbit in row (120/15-960/120)
-    eval -= (position->count_type_in_row(2, Boop::P1_CAT) * 15 * (turn == Boop::P1 && position->cats(position->next_mover()) > 0 ? (position->cats(position->last_mover()) > 0 ? 4 : 8) * (position->cats(position->next_mover()) != 0 ? 0.25 : 1) : 1));
-    eval += (position->count_type_in_row(2, Boop::P2_CAT) * 15 * (turn == Boop::P2 && position->cats(position->last_mover()) > 0 ? (position->cats(position->next_mover()) > 0 ? 4 : 8) * (position->cats(position->last_mover()) != 0 ? 0.25 : 1) : 1));
+    eval -= (position->count_type_in_row(2, Boop::P1_CAT) * 15 * (turn == Boop::P1 && position->cats(position->next_mover()) > 0 ? (position->cats(position->last_mover()) > 0 ? 8 : 16) * (position->cats(position->next_mover()) != 0 ? 0.25 : 1) : 1));
+    eval += (position->count_type_in_row(2, Boop::P2_CAT) * 15 * (turn == Boop::P2 && position->cats(position->last_mover()) > 0 ? (position->cats(position->next_mover()) > 0 ? 8 : 16) * (position->cats(position->last_mover()) != 0 ? 0.25 : 1) : 1));
 
     // Winning Conditions - Give huge rewards
     // Check for THREE rabbit in row
