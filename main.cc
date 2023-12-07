@@ -19,13 +19,12 @@ int main() {
     AI* AI1 = new Human_AI;
     AI* AI2 = new Boopy_Alpha_Beta_AI;
     double think_time = 100; // ms
+    Boop mygame(AI1, AI2, think_time);
 
     int num_games = 100;
     double average_duration = 0;
 
     for(int i = 1; i <= num_games; ++i) {
-        Boop mygame(AI1, AI2, think_time);
-
         results = mygame.play();
 
         if(results.winner == Boop::P1) { 

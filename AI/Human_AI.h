@@ -24,9 +24,9 @@ std::string Human_AI::think(std::queue<std::string> moves, Timer& timer) {
 
 
     if(game->move_type() == Boop::REMOVE_THREE) {
-        cout << "[ Remove Three]\n";
+        cout << "[ Remove Three ] type three cords (\"c3 d4 e5\")\n";
     } else if(game->move_type() == Boop::REMOVE_ONE) {
-        cout << "[ Remove one ]\n";
+        cout << "[ Remove one ] type in one cord (\"c3\")\n";
     }
     cout << "Enter your move: ";
     std::getline(std::cin >> ws, best_move);
