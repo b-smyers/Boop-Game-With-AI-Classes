@@ -54,6 +54,8 @@ class Boop {
 
 
         Game_Results play() {
+            restart();
+
             Game_Results results;
             results.think_time = think_time_ms;
             string AI_Move;

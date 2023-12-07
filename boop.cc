@@ -482,11 +482,6 @@ void Boop::restart() {
     P1_cat_pieces = 0;
     P2_kit_pieces = 8;
     P2_cat_pieces = 0;
-
-    // AI Items
-    P1_AI = nullptr;
-    P2_AI = nullptr;
-    think_time_ms = 100;
 }
 
 int Boop::evaluate() const {
