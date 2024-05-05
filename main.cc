@@ -16,8 +16,8 @@ int main() {
 
     Boop::Game_Results results;
 
-    AI* AI1 = new Human_AI;
-    AI* AI2 = new Boopy_Alpha_Beta_AI;
+    AI* AI1 = new Random_AI;
+    AI* AI2 = new Minimax_Alpha_Beta_AI;
     double think_time = 100; // ms
     Boop mygame(AI1, AI2, think_time);
 
