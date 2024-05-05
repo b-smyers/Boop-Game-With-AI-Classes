@@ -1,10 +1,10 @@
 .PHONY: build clean
 
 CC = g++
-CFLAGS =
+CFLAGS = -O2
 
 HEADER_FILES = $(wildcard ./AI/*.h) AI.h boop.h colors.h Timer.h
-SRCS = main.cc boop.cc
+SRCS = $(wildcard ./*.cc)
 
 build: a.out
 
