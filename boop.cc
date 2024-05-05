@@ -477,6 +477,7 @@ void Boop::restart() {
             board[y][x] = NONE;
         }
     }
+    move_state = MAKE_MOVE;
     move_number = 0;
     P1_kit_pieces = 8;
     P1_cat_pieces = 0;
